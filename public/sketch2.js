@@ -1,6 +1,3 @@
-function preload() {
-    car_img = loadImage('assets/car.png');
-}
 function setup() {
     createCanvas(Bounds.MAX_X, Bounds.MAX_Y)
     frameRate(FRAME_RATE)
@@ -15,10 +12,9 @@ function setup() {
 
     startTimeForCurrentGen = Date.now()
 
-    if (!useSaved) {
-        trainedModelButton = createButton("Load trained model on new track")
-        trainedModelButton.mousePressed(() => { localStorage.setItem('navigated', true);; window.location.href = "manual.html" })
-    }
+
+
+
     setupWorld()
     setupNN()
 
@@ -28,17 +24,20 @@ function setup() {
         neat.import(savedModel)
     }
 
-    SIMULATION_SPEED = { value: () => 1 }//createSlider(1, MAX_SIMULATION_SPEED, 1)
+    SIMULATION_SPEED = createSlider(1, MAX_SIMULATION_SPEED, 1)
 }
-
 
 function draw() {
     background(0)
-    controls()
-    for (var i = 0; i < SIMULATION_SPEED.value(); i++) {
-        genetic()
-    }
-    drawWorld()
+    // controls()
+
+    // new Promise(() => {
+    //     for (var i = 0; i < SIMULATION_SPEED.value(); i++) {
+    //         genetic()
+    //     }
+    // })
+
+    // drawWorld()
 }
 
 function genetic() {
@@ -85,6 +84,7 @@ function genetic() {
 
             if (atleast(MINIMUM_PERCENT)) {
                 setupWorld()
+                neat.import(neat.export())
             } else {
                 currentTry += 1
                 neat.doGen()
@@ -157,6 +157,8 @@ function setupWorld() {
 
         c += 1
     }
+
+
     walls.push(new Boundary(leftWalls[0][0], leftWalls[0][1],
         rightWalls[0][0], rightWalls[0][1]))
 
@@ -355,15 +357,21 @@ function drawGreenWalls() {
 }
 
 function controls() {
+    // if (keyIsDown(LEFT_ARROW)) {
+    //     cars.forEach(_ => _.rotateLeft())
+    // }
+    // if (keyIsDown(RIGHT_ARROW)) {
+    //     cars.forEach(_ => _.rotateRight())
+    // }
+    // if (keyIsDown(UP_ARROW)) {
+    //     cars.forEach(_ => _.forward())
+    // }
+    // if (keyIsDown(DOWN_ARROW)) {
+    //     cars.forEach(_ => _.reverse())
+    // }
     if (keyIsDown(LEFT_ARROW)) {
         DRAW_GREEN_WALLS = !DRAW_GREEN_WALLS
         DRAW_RAYS = !DRAW_RAYS
-    }
-    if (keyIsDown(UP_ARROW)) {
-        importModelFnc()
-    }
-    if (keyIsDown(DOWN_ARROW)) {
-        trainNewModelFnc()
     }
     if (keyIsDown(67)) {
         cars.forEach(car => {

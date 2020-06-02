@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.10.2/p5.js"></script>
+  <meta charset="utf-8" />
+
+</head>
+
+<body style="background:green">
+  <script src="sketch.js"></script>
+  <script src="boundary.js"></script>
+  <script src="consts.js"></script>
+  <script src="car.js"></script>
+  <script src="NEAT.js"></script>
+  <script src="sensor.js"></script>
+  <script src="savedModel.js"></script>
+  <script>
+    if (!localStorage.getItem('navigated')) {
+      useSaved = false
+      window.location.href = "index.html"
+    } else {
+      useSaved = true
+      localStorage.clear()
+    }
+  </script>
+</body>
+
+</html>

@@ -16,8 +16,6 @@ class Car {
     fuel = MAX_FUEL
 
     constructor(x, y) {
-        this.x = x
-        this.y = y
         this.pos.x = x
         this.pos.y = y
         this.heading = [90]
@@ -36,8 +34,6 @@ class Car {
             if (this.fuel < 0 || this.crashed) {
                 this.crashed = true
                 this.done = true
-                this.pos.x = 0
-                this.pos.y = 0
                 clearInterval(fuelDecreaser)
             }
         }, 1000)
@@ -64,7 +60,7 @@ class Car {
     getSensorReadings() {
         // this.score += atan2(height / 2 - y, width / 2 - x)
         // this.score = pow(2, map(180 + degrees(atan2(height / 2 - this.pos.y, width / 2 - this.pos.x)), 180, 180 + 360, 1, 10))
-        this.score = 180 + degrees(atan2(height / 2 - this.pos.y, width / 2 - this.pos.x))
+        this.score = this.fuel * (180 + degrees(atan2(height / 2 - this.pos.y, width / 2 - this.pos.x)))
 
         if (this.angularDistance(endCheckPoint.x, endCheckPoint.y, this.pos.x, this.pos.y) < radians(2)) {
             this.reached = true
@@ -78,14 +74,12 @@ class Car {
                     if (this.sensors[i].sensed < 20) {
                         this.crashed = true
                         this.done = true
-                        this.pos.x = 0
-                        this.pos.y = 0
                         break;
                     }
                 }
                 if (this.sensors[i].rightPath) {
                     if (this.sensors[i].sensed < 2) {
-                        // this.score *= this.score
+                        this.score += 1
                         // break;
                     }
                 }
@@ -151,12 +145,15 @@ class Car {
     }
 
     draw(iMaxCar = false) {
+        if (this.pos.x > width || this.pos.y > height) {
+            this.crashed = true
+        }
         if (this.crashed) return
         stroke(255)
         strokeWeight(iMaxCar ? 4 : 1)
 
-        x = this.pos.x
-        y = this.pos.y
+        const x = this.pos.x
+        const y = this.pos.y
         push()
         translate(x, y)
         rotate(radians(this.heading[0]))
@@ -167,6 +164,7 @@ class Car {
         carColor.setAlpha(map(this.fuel, 0, MAX_FUEL, 0, 255))
         fill(carColor)
         rect(-this.height / 2, -this.width / 2, this.height, this.width)
+        image(car_img, 0, 0)
         pop()
 
 
