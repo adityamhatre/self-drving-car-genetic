@@ -1,5 +1,6 @@
 function preload() {
     car_img = loadImage('assets/car.png');
+    car_img.resize(0, 1)
 }
 function setup() {
     createCanvas(Bounds.MAX_X, Bounds.MAX_Y)
@@ -15,8 +16,15 @@ function setup() {
 
     startTimeForCurrentGen = Date.now()
 
+    showCheckPointsBtn = createButton(`Toggle checkpoints`)
+    showCheckPointsBtn.position(200, 930)
+    showCheckPointsBtn.mousePressed(() => {
+        DRAW_GREEN_WALLS = !DRAW_GREEN_WALLS;
+    })
+
     if (!useSaved) {
         trainedModelButton = createButton("Load trained model on new track")
+        trainedModelButton.position(200, 900)
         trainedModelButton.mousePressed(() => { localStorage.setItem('navigated', true);; window.location.href = "manual.html" })
     }
     setupWorld()
@@ -87,6 +95,9 @@ function genetic() {
                 setupWorld()
             } else {
                 currentTry += 1
+                if (currentTry > 50) {
+                    setupWorld()
+                }
                 neat.doGen()
             }
 
@@ -357,7 +368,7 @@ function drawGreenWalls() {
 function controls() {
     if (keyIsDown(LEFT_ARROW)) {
         DRAW_GREEN_WALLS = !DRAW_GREEN_WALLS
-        DRAW_RAYS = !DRAW_RAYS
+        // DRAW_RAYS = !DRAW_RAYS
     }
     if (keyIsDown(UP_ARROW)) {
         importModelFnc()

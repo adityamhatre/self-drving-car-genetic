@@ -79,7 +79,7 @@ class Car {
                 }
                 if (this.sensors[i].rightPath) {
                     if (this.sensors[i].sensed < 2) {
-                        this.score += 1
+                        this.score += 10
                         // break;
                     }
                 }
@@ -160,16 +160,28 @@ class Car {
 
         push()
         rotate(radians(90))
+
+        push()
+        rotate(radians(270))
+        if (iMaxCar) {
+            scale(map(this.fuel, 0, MAX_FUEL, 0, 1.5))
+        } else {
+            scale(map(this.fuel, 0, MAX_FUEL, 0, 1))
+        }
+        image(car_img, -this.width / 2, -this.height / 2, this.width, this.height)
+        pop()
         let carColor = color("green")
         carColor.setAlpha(map(this.fuel, 0, MAX_FUEL, 0, 255))
         fill(carColor)
-        rect(-this.height / 2, -this.width / 2, this.height, this.width)
-        image(car_img, 0, 0)
+        // rect(-this.height / 2, -this.width / 2, this.height, this.width)
         pop()
 
 
         pop()
 
+        if (iMaxCar) {
+            this.sensors.forEach(_ => _.draw())
+        }
         if (DRAW_RAYS)
             this.sensors.forEach(_ => _.draw())
 

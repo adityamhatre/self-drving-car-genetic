@@ -6,7 +6,7 @@ class Boundary {
 
     draw() {
         stroke(255)
-        strokeWeight(1)
+        strokeWeight(3)
         line(this.a.x, this.a.y, this.b.x, this.b.y)
     }
 }

@@ -1,6 +1,6 @@
 Bounds = {
     MAX_X: 1700,
-    MAX_Y: 900
+    MAX_Y: 1000
 }
 FRAME_RATE = 100
 
