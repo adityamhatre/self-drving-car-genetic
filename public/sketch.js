@@ -3,8 +3,6 @@ function preload() {
     car_img.resize(0, 1)
 }
 function setup() {
-    const gpu = new GPU();
-    gpu.createKernel()
 
     createCanvas(Bounds.MAX_X, Bounds.MAX_Y)
     frameRate(FRAME_RATE)
