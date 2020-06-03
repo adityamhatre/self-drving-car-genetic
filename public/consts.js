@@ -14,6 +14,7 @@ MAX_FUEL = 20 * NOISE
 MINIMUM_PERCENT = 20
 DRAW_RAYS = false
 DRAW_GREEN_WALLS = false
+MAX_TRIES_FOR_LEVEL = 30
 
 useSaved = false
 navigated = false

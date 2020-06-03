@@ -3,6 +3,9 @@ function preload() {
     car_img.resize(0, 1)
 }
 function setup() {
+    const gpu = new GPU();
+    gpu.createKernel()
+
     createCanvas(Bounds.MAX_X, Bounds.MAX_Y)
     frameRate(FRAME_RATE)
     walls = []
@@ -36,16 +39,25 @@ function setup() {
         neat.import(savedModel)
     }
 
-    SIMULATION_SPEED = { value: () => 1 }//createSlider(1, MAX_SIMULATION_SPEED, 1)
+    SIMULATION_SPEED = { value: () => 10 }//createSlider(1, MAX_SIMULATION_SPEED, 1)
+
+    waitForLoop = false
+    setInterval(() => {
+        if (!waitForLoop) {
+            waitForLoop = true
+            for (let i = 0; i < SIMULATION_SPEED.value(); i++) {
+                genetic()
+            }
+            waitForLoop = false
+        }
+
+    }, 10)
 }
 
 
 function draw() {
     background(0)
     controls()
-    for (var i = 0; i < SIMULATION_SPEED.value(); i++) {
-        genetic()
-    }
     drawWorld()
 }
 
@@ -95,7 +107,7 @@ function genetic() {
                 setupWorld()
             } else {
                 currentTry += 1
-                if (currentTry > 50) {
+                if (currentTry > MAX_TRIES_FOR_LEVEL) {
                     setupWorld()
                 }
                 neat.doGen()
