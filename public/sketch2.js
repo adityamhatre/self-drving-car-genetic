@@ -37,7 +37,7 @@ function setup() {
         neat.import(savedModel)
     }
 
-    SIMULATION_SPEED = { value: () => 20 }//createSlider(1, MAX_SIMULATION_SPEED, 1)
+    SIMULATION_SPEED = { value: () => 10 }//createSlider(1, MAX_SIMULATION_SPEED, 1)
 
     waitForLoop = false
     setInterval(() => {
@@ -49,7 +49,7 @@ function setup() {
             waitForLoop = false
         }
 
-    }, 1)
+    }, 10)
 }
 
 

@@ -60,7 +60,7 @@ class Car {
         return readings
     }
     getSensorReadings() {
-        // this.score =- (180 + degrees(atan2(height / 2 - this.pos.y, width / 2 - this.pos.x)))
+        this.score = this.fuel * (180 + degrees(atan2(height / 2 - this.pos.y, width / 2 - this.pos.x)))
 
         if (this.angularDistance(endCheckPoint.x, endCheckPoint.y, this.pos.x, this.pos.y) < radians(2)) {
             this.reached = true
