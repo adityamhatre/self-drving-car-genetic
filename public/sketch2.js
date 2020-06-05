@@ -1,4 +1,9 @@
+function preload() {
+    car_img = loadImage('assets/car.png');
+    car_img.resize(0, 1)
+}
 function setup() {
+
     createCanvas(Bounds.MAX_X, Bounds.MAX_Y)
     frameRate(FRAME_RATE)
     walls = []
@@ -12,9 +17,17 @@ function setup() {
 
     startTimeForCurrentGen = Date.now()
 
+    showCheckPointsBtn = createButton(`Toggle checkpoints`)
+    showCheckPointsBtn.position(200, 930)
+    showCheckPointsBtn.mousePressed(() => {
+        DRAW_GREEN_WALLS = !DRAW_GREEN_WALLS;
+    })
 
-
-
+    if (!useSaved) {
+        trainedModelButton = createButton("Load trained model on new track")
+        trainedModelButton.position(200, 900)
+        trainedModelButton.mousePressed(() => { localStorage.setItem('navigated', true);; window.location.href = "manual.html" })
+    }
     setupWorld()
     setupNN()
 
@@ -24,20 +37,26 @@ function setup() {
         neat.import(savedModel)
     }
 
-    SIMULATION_SPEED = createSlider(1, MAX_SIMULATION_SPEED, 1)
+    SIMULATION_SPEED = { value: () => 20 }//createSlider(1, MAX_SIMULATION_SPEED, 1)
+
+    waitForLoop = false
+    setInterval(() => {
+        if (!waitForLoop) {
+            waitForLoop = true
+            for (let i = 0; i < SIMULATION_SPEED.value(); i++) {
+                genetic()
+            }
+            waitForLoop = false
+        }
+
+    }, 1)
 }
+
 
 function draw() {
     background(0)
-    // controls()
-
-    // new Promise(() => {
-    //     for (var i = 0; i < SIMULATION_SPEED.value(); i++) {
-    //         genetic()
-    //     }
-    // })
-
-    // drawWorld()
+    controls()
+    drawWorld()
 }
 
 function genetic() {
@@ -67,8 +86,8 @@ function genetic() {
         if (allCrashed) {
             endTimeForCurrentGen = Date.now()
             if (endTimeForCurrentGen - startTimeForCurrentGen < 200) {
-                setupWorld()
-                return
+                // setupWorld()
+                // return
             }
         }
 
@@ -83,10 +102,12 @@ function genetic() {
             }
 
             if (atleast(MINIMUM_PERCENT)) {
-                setupWorld()
-                neat.import(neat.export())
+                // setupWorld()
             } else {
                 currentTry += 1
+                if (currentTry > MAX_TRIES_FOR_LEVEL) {
+                    // setupWorld()
+                }
                 neat.doGen()
             }
 
@@ -127,42 +148,129 @@ function setupWorld() {
 
     let c = 0
 
-    for (let k = 0; k <= 2 * PI; k += radians(5)) {
-        xoff = map(cos(k), -1, 1, 0, noiseMax)
-        yoff = map(sin(k), -1, 1, 0, noiseMax)
 
-        r = map(noise(xoff, yoff), 0, 1, 50, height / 2)
-        x = r * cos(k) + width / 2
-        y = r * sin(k) + height / 2
+    leftWalls.push([244, 166])
+    rightWalls.push([200, 90])
 
-        if (c == 1) {
-            startCheckPoint.x = x
-            startCheckPoint.y = y
-        }
-        if (c == 70) {
-            endCheckPoint.x = x
-            endCheckPoint.y = y
-        }
+    leftWalls.push([244, 550])
+    rightWalls.push([200, 700])
 
-        checkPoints.push(new CheckPoint(x, y))
-        greenRadius.push([r, k])
+    leftWalls.push([376, 681])
+    rightWalls.push([440, 950])
 
-        x = (r - WALL_WIDTH) * cos(k) + width / 2
-        y = (r - WALL_WIDTH) * sin(k) + height / 2
-        leftWalls.push([x, y])
+    leftWalls.push([461, 681])
+    rightWalls.push([600, 950])
 
-        x = (r + WALL_WIDTH) * cos(k) + width / 2
-        y = (r + WALL_WIDTH) * sin(k) + height / 2
-        rightWalls.push([x, y])
+    leftWalls.push([602, 550])
+    rightWalls.push([720, 830])
 
-        c += 1
+    leftWalls.push([662, 681])
+    rightWalls.push([770, 950])
+
+    leftWalls.push([1049, 681])
+    rightWalls.push([1430, 950])
+
+    leftWalls.push([1049, 252])
+    rightWalls.push([1430, 170])
+
+    leftWalls.push([798, 252])
+    rightWalls.push([900, 170])
+
+    leftWalls.push([798, 391])
+    rightWalls.push([900, 370])
+
+    leftWalls.push([614, 391])
+    rightWalls.push([880, 370])
+
+    leftWalls.push([614, 247])
+    rightWalls.push([880, 170])
+
+    leftWalls.push([426, 247])
+    rightWalls.push([660, 170])
+
+    leftWalls.push([426, 166])
+    rightWalls.push([660, 90])
+
+    leftWalls.push([244, 166])
+    rightWalls.push([200, 90])
+
+    for (var i = 0; i < leftWalls.length; i++) {
+        leftWalls[i][0] += 200
+        leftWalls[i][1] -= 0
+
+        leftWalls[i][0] *= 1.2
+        leftWalls[i][1] *= 1.2
+
+        rightWalls[i][0] += 200
+        rightWalls[i][1] -= 0
+
     }
 
+    const factor = 100
+    for (var i = 166; i <= 700; i += factor) {
+        greenWalls.push(new GreenWall(460, i, 470, i))
+    }
 
-    walls.push(new Boundary(leftWalls[0][0], leftWalls[0][1],
-        rightWalls[0][0], rightWalls[0][1]))
+    for (var i = 10; i < 200; i += factor) {
+        greenWalls.push(new GreenWall(470 + i, 700 + i, 480 + i, 700 + i))
+    }
+
+    for (var i = 0; i < 110; i += factor) {
+        greenWalls.push(new GreenWall(680 + i, 880, 680 + i, 900))
+    }
+
+    for (var i = 10; i < 160; i += factor) {
+        greenWalls.push(new GreenWall(780 + i, 900 - i, 790 + i, 900 - i))
+    }
+
+    for (var i = 940; i < 1000; i += factor / 2) {
+        greenWalls.push(new GreenWall(i, 2.5 * i - 1600, i + 10, 2.5 * i - 1600))
+    }
+
+    for (var i = 0; i < 550; i += factor) {
+        greenWalls.push(new GreenWall(1010 + i, 880, 1010 + i, 900))
+    }
+
+    for (var i = 870; i >= 250; i -= factor) {
+        greenWalls.push(new GreenWall(1550, i, 1570, i))
+    }
+
+    for (var i = 50; i < 470; i += factor) {
+        greenWalls.push(new GreenWall(1100 + i, 250, 1100 + i, 270))
+    }
+
+    
+    for (var i = 0; i < 270; i += factor) {
+        greenWalls.push(new GreenWall(800 + i, 230, 800 + i, 250))
+    }
+
+    for (var i = 0; i < 240; i += factor) {
+        greenWalls.push(new GreenWall(600 + i, 140, 600 + i, 160))
+    }
+    
+    for (var i = 290; i <= 420; i += factor) {
+        greenWalls.push(new GreenWall(1140, i, 1160, i))
+    }
+
+    for (var i = 290; i <= 420; i += factor) {
+        greenWalls.push(new GreenWall(1020, i, 1040, i))
+    }
+
+    for (var i = 160; i <= 240; i += factor) {
+        greenWalls.push(new GreenWall(790, i, 810, i))
+    }
+    for (var i = 0; i < 160; i += factor) {
+        greenWalls.push(new GreenWall(1030 + i, 420, 1030 + i, 440))
+    }
+    startCheckPoint.x = 460
+    startCheckPoint.y = 170
+
+    endCheckPoint.x = 580
+    endCheckPoint.y = 150
 
     for (var i = 1; i < leftWalls.length; i++) {
+
+
         walls.push(new Boundary(
             leftWalls[i - 1][0], leftWalls[i - 1][1],
             leftWalls[i][0], leftWalls[i][1]
@@ -171,20 +279,6 @@ function setupWorld() {
             rightWalls[i - 1][0], rightWalls[i - 1][1],
             rightWalls[i][0], rightWalls[i][1]
         ))
-
-        greenWalls = greenRadius.map(arr => {
-            rad = arr[0] - 10
-            ang = arr[1]
-            x1 = width / 2 + rad * cos(ang)
-            y1 = height / 2 + rad * sin(ang)
-
-            rad = arr[0] + 10
-            ang = arr[1]
-            x2 = width / 2 + rad * cos(ang)
-            y2 = height / 2 + rad * sin(ang)
-            return new GreenWall(x1, y1, x2, y2)
-        })
-
     }
 
     for (let i = 0; i < POP_SIZE; i++) {
@@ -194,6 +288,7 @@ function setupWorld() {
 }
 
 function drawWorld() {
+    strokeWeight(1)
     drawCheckPointsAndWalls()
     drawCars()
 }
@@ -210,8 +305,9 @@ function drawCheckPointsAndWalls() {
 
 function drawNN() {
     push()
-    translate(100, 500)
+    translate(30, 500)
     fill(255)
+    stroke(255)
 
     firstLayer = [[0, 50], [0, 125], [0, 200], [0, 275], [0, 350]]
     secondLayer = [[150, 50], [150, 125], [150, 200], [150, 275], [150, 350]]
@@ -357,21 +453,15 @@ function drawGreenWalls() {
 }
 
 function controls() {
-    // if (keyIsDown(LEFT_ARROW)) {
-    //     cars.forEach(_ => _.rotateLeft())
-    // }
-    // if (keyIsDown(RIGHT_ARROW)) {
-    //     cars.forEach(_ => _.rotateRight())
-    // }
-    // if (keyIsDown(UP_ARROW)) {
-    //     cars.forEach(_ => _.forward())
-    // }
-    // if (keyIsDown(DOWN_ARROW)) {
-    //     cars.forEach(_ => _.reverse())
-    // }
     if (keyIsDown(LEFT_ARROW)) {
         DRAW_GREEN_WALLS = !DRAW_GREEN_WALLS
-        DRAW_RAYS = !DRAW_RAYS
+        // DRAW_RAYS = !DRAW_RAYS
+    }
+    if (keyIsDown(UP_ARROW)) {
+        importModelFnc()
+    }
+    if (keyIsDown(DOWN_ARROW)) {
+        trainNewModelFnc()
     }
     if (keyIsDown(67)) {
         cars.forEach(car => {

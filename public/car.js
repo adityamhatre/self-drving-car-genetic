@@ -9,6 +9,7 @@ class Car {
 
     sensors = []
     score = 0
+    timeAlive = 0
     reached = false
 
     done = false
@@ -16,6 +17,7 @@ class Car {
     fuel = MAX_FUEL
 
     constructor(x, y) {
+
         this.pos.x = x
         this.pos.y = y
         this.heading = [90]
@@ -58,9 +60,7 @@ class Car {
         return readings
     }
     getSensorReadings() {
-        // this.score += atan2(height / 2 - y, width / 2 - x)
-        // this.score = pow(2, map(180 + degrees(atan2(height / 2 - this.pos.y, width / 2 - this.pos.x)), 180, 180 + 360, 1, 10))
-        this.score = this.fuel * (180 + degrees(atan2(height / 2 - this.pos.y, width / 2 - this.pos.x)))
+        // this.score =- (180 + degrees(atan2(height / 2 - this.pos.y, width / 2 - this.pos.x)))
 
         if (this.angularDistance(endCheckPoint.x, endCheckPoint.y, this.pos.x, this.pos.y) < radians(2)) {
             this.reached = true
