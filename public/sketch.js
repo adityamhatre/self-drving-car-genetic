@@ -308,7 +308,7 @@ function drawNN() {
 
     //go forward
     nodeColor = color("blue")
-    nodeColor.setAlpha(map(decisions[2], 0, 1, 150, 255))
+    nodeColor.setAlpha(map(decisions[2], 0, 1, 0, 255))
     fill(nodeColor)
     ellipse(thirdLayer[2][0], thirdLayer[2][1], 25)
 
@@ -320,7 +320,7 @@ function drawStats() {
     strokeWeight(1)
     textSize(30)
 
-    text(`Best score: ${maxScore}`, 100, 100)
+    text(`Best score: ${ceil(maxScore)}`, 100, 100)
 
     let carsReached = 0
     let carsCrashed = 0
